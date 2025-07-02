@@ -20,6 +20,7 @@
     },
     "homepage": "https://github.com/phaserjs/template-rollup-ts#readme",
     "dependencies": {
+        "matter-js": "^0.20.0",
         "phaser": "^3.90.0"
     },
     "devDependencies": {
@@ -31,6 +32,7 @@
         "@rollup/plugin-terser": "^0.4.4",
         "@rollup/plugin-typescript": "12.1.2",
         "@rollup/plugin-url": "^8.0.2",
+        "@types/matter-js": "^0.19.8",
         "rollup": "4.40.0",
         "rollup-plugin-copy": "3.5.0",
         "rollup-plugin-delete": "3.0.1",

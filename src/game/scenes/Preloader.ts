@@ -31,14 +31,24 @@ export class Preloader extends Scene
     {
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
-
+        this.load.image("drag-it", "menu/drag-it.png");
+        this.load.image("menu-logo", "menu/menu-logo.png");
         this.load.image('logo', 'logo.png');
-        this.load.spritesheet('background', 'Background Walls 1.png', {
-            frameWidth: 360,
-            frameHeight: 640,
-            spacing: 0,
-            margin: 0
-        });
+        this.load.image('ground', 'bg.png');
+        this.load.image('background', 'Background/Background Walls 1.png');
+        this.load.image('ball', 'Balls/ball1.png')
+        this.load.image('rim1', 'Basket/Basket1.png');
+        this.load.image('rim2', 'Basket/Basket2.png');
+        this.load.image('rim3', 'Basket/Basket3.png');
+        this.load.image('rim4', 'Basket/Basket4.png');
+        this.load.image('netOrange', 'Basket/OrangeNet.png');
+        this.load.image('netWhite', 'Basket/WhiteNet.png');
+        this.load.image('wall', 'menu/wall.png');
+        this.load.image('settingButton', 'menu/settingButton.png');
+        this.load.image('darkmode', 'menu/DarkBulb.png');
+        this.load.image('lightmode', 'menu/LightBulb.png');
+        this.load.image('star', 'menu/star.png');
+        this.load.image('newBall', 'menu/newBall.png');
     }
 
     create ()
@@ -47,6 +57,6 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MainMenu');
+        this.scene.start('Game');
     }
 }

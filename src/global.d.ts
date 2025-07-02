@@ -69,3 +69,34 @@ declare module '*.fs' {
     const src: string
     export default src
 }
+
+// interfaces
+interface IBall {
+    public reset(x: number, y: number): void;
+}
+
+interface IBasket {
+    public shakeNet(): void;
+    public transitionTo(state: string): void;
+    public getTopRim(): Phaser.GameObjects.Image;
+    public getBottomRim(): Phaser.GameObjects.Image;
+    public getSensor(): Phaser.GameObjects.Image;
+    public getNet(): Phaser.GameObjects.Image;
+    public getScene(): Phaser.Scene;
+    public getCurrentState(): string;
+
+}
+
+type BasketConfig = {
+    bodySize?: [number, number];
+    bodyOffset?: [number, number];
+};
+
+interface IBasketState {
+    enter(): void;
+    exit(): void;
+}
+
+interface IWall {
+    
+}

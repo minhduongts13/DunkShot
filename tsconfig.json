@@ -21,7 +21,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "types": ["phaser"],
     },
     "include": [
         "src"

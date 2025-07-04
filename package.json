@@ -6,7 +6,8 @@
         "dev": "node log.js dev & rollup --watch --config rollup/rollup.config.dev.mjs --no-treeshake",
         "build": "node log.js build & rollup --config rollup/rollup.config.prod.mjs",
         "dev-nolog": "rollup --watch --config rollup/rollup.config.dev.mjs --no-treeshake",
-        "build-nolog": "rollup --config rollup/rollup.config.prod.mjs"
+        "build-nolog": "rollup --config rollup/rollup.config.prod.mjs",
+        "deploy": "npm run build && gh-pages -d dist"
     },
     "repository": {
         "type": "git",
@@ -40,6 +41,8 @@
         "rollup-plugin-livereload": "2.0.5",
         "rollup-plugin-serve": "3.0.0",
         "tslib": "2.8.1",
-        "typescript": "^5.4.5"
+        "typescript": "^5.4.5",
+        "gh-pages": "^6.3.0"
+
     }
 }

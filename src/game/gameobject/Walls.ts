@@ -18,6 +18,7 @@ export default class Walls extends Phaser.GameObjects.Container implements IWall
         )
             .setOrigin(0.5)
             .setDisplaySize(15, height)
+            .setScrollFactor(0)
             .setAlpha(0.4);
 
         this.rightWall = scene.add.image(
@@ -27,6 +28,7 @@ export default class Walls extends Phaser.GameObjects.Container implements IWall
         )
             .setOrigin(0.5)
             .setDisplaySize(15, height)
+            .setScrollFactor(0)
             .setAlpha(0.4);
 
 

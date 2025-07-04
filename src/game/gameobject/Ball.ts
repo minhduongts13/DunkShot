@@ -2,7 +2,7 @@
 import Phaser from "phaser";
 
 export default class Ball extends Phaser.Physics.Arcade.Image implements IBall {
-    private throwSpeed: number;
+    public currentBasket: number;
     
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string){
         super(scene, x, y, texture);
@@ -14,8 +14,7 @@ export default class Ball extends Phaser.Physics.Arcade.Image implements IBall {
         this.setCircle(this.width/2);
         this.setBounce(0.8);
         this.setCollideWorldBounds(true);
-        this.throwSpeed = 800;
-        
+        this.currentBasket = 1;
     }
     
 

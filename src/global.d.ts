@@ -100,3 +100,28 @@ interface IBasketState {
 interface IWall {
     
 }
+
+interface IPointManager {
+    public checkHighScore(): void;
+    public getCurrentPoint(): number;
+    public setPoint(points: number): void;
+    public setMoney(money: number): void;
+    public getMoney(): number;
+    public resetScore(): void;
+}
+
+interface IGameScene {
+    public getLayers(index: number): Phaser.GameObjects.Layer;
+    public getDragZone(): Phaser.GameObjects.Zone;
+}
+
+interface IStar {
+    public spawn(x : number, y: number): void;
+    public disappear(): void;
+}
+
+interface ILayer {
+    fadeIn(): void;
+    fadeOut(): void;
+
+}

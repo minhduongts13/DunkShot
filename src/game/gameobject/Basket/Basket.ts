@@ -68,6 +68,9 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
     public getNet(){ return this.net;}
     public getScene(){ return this.scene;}
     public getCurrentState(){ return this.currentState}
+    public customAngle(angle: number): void {
+        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(70, 50*Math.cos(angle)).setOffset(0, 50 - 50*Math.cos(angle));
+    }
 
     private create(config?: BasketConfig): void{
         this.rimTop = this.scene.physics.add.image(0, 0, "rim1")
@@ -75,7 +78,7 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             .setOrigin(0.5, 0.5);
             
         (this.rimTop.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(80, 50).setOffset(0, 0);
+        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(70, 50).setOffset(0, 0);
         
         this.rimBottom = this.scene.add.image(0, 10, "rim2").setOrigin(0.5, 0.5);
         const body = this.rimTop.body as Phaser.Physics.Arcade.Body;
@@ -90,7 +93,7 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
         const sensorY = 30;  
         this.sensor = this.scene.physics.add.image(0, sensorY, null as any)
             .setImmovable(true)
-            .setSize(80, 5)
+            .setSize(70, 5)
             .setOrigin(0.5, 0)
             .setVisible(false);
         (this.sensor.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);

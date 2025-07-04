@@ -47,8 +47,16 @@ export class Preloader extends Scene
         this.load.image('settingButton', 'menu/settingButton.png');
         this.load.image('darkmode', 'menu/DarkBulb.png');
         this.load.image('lightmode', 'menu/LightBulb.png');
-        this.load.image('star', 'menu/star.png');
+        this.load.image('star0', 'game/Collectibles0.png');
+        this.load.image('star1', 'game/Collectibles1.png');
+        this.load.image('star2', 'game/Collectibles2.png');
+        this.load.image('star3', 'game/Collectibles3.png');
+        this.load.image('star4', 'game/Collectibles4.png');
         this.load.image('newBall', 'menu/newBall.png');
+        this.load.image('pause', 'Game/pause.png');
+        this.load.image('settingCircle', 'GameOver/setting.png');
+        this.load.image('like', 'GameOver/like.png');
+        this.load.image('restart', 'GameOver/restart.png');
     }
 
     create ()

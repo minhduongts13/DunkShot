@@ -2,11 +2,11 @@
 import Phaser from 'phaser';
 import EmptyState from './EmptyState';
 import BallState from './BallState';
-import { Game } from '../../scenes/Game';
+
 
 export default class Basket extends Phaser.GameObjects.Container implements IBasket {
     protected rimTop: Phaser.Physics.Arcade.Image;
-    protected rimBottom: Phaser.GameObjects.Image;
+    protected rimBottom: Phaser.Physics.Arcade.Image;
     protected net: Phaser.Physics.Arcade.Image;
     protected sensor: Phaser.Physics.Arcade.Image;
     private currentState: string;
@@ -15,10 +15,10 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
     private dragZone: Phaser.GameObjects.Zone;
     private defaultNetHeight: number;
     private aimGraphics: Phaser.GameObjects.Graphics;
-    public scene: Phaser.Scene;
+    public scene: Phaser.Scene & IHasDragZone;
 
     constructor(
-        scene: Phaser.Scene,
+        scene: Phaser.Scene & IHasDragZone,
         x: number,
         y: number,
         state: string,
@@ -69,7 +69,25 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
     public getScene(){ return this.scene;}
     public getCurrentState(){ return this.currentState}
     public customAngle(angle: number): void {
-        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(70, 50*Math.cos(angle)).setOffset(0, 50 - 50*Math.cos(angle));
+        const bodyTop = this.rimTop.body as Phaser.Physics.Arcade.Body;
+        const bodyBot = this.rimBottom.body as Phaser.Physics.Arcade.Body;
+
+        const w = 56;
+        const h = 27;
+
+        const leftLocal  = new Phaser.Math.Vector2(-w/2, -h/2);
+        const rightLocal = new Phaser.Math.Vector2( w/2, -h/2);
+
+        Phaser.Math.Rotate(leftLocal,  angle);
+        Phaser.Math.Rotate(rightLocal, angle);
+
+        const leftOffsetX  = leftLocal.x  + w/2;
+        const leftOffsetY  = leftLocal.y  + h/2;
+        const rightOffsetX = rightLocal.x + w/2;
+        const rightOffsetY = rightLocal.y + h/2;
+
+        bodyTop.setOffset(leftOffsetX, leftOffsetY + 10);
+        bodyBot.setOffset(rightOffsetX + 10, rightOffsetY);
     }
 
     private create(config?: BasketConfig): void{
@@ -78,17 +96,14 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             .setOrigin(0.5, 0.5);
             
         (this.rimTop.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(70, 50).setOffset(0, 0);
+        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(6, 6).setOffset(0, 10);
         
-        this.rimBottom = this.scene.add.image(0, 10, "rim2").setOrigin(0.5, 0.5);
-        const body = this.rimTop.body as Phaser.Physics.Arcade.Body;
-        body.checkCollision = {
-            none: false,  
-            up: false,
-            down: false,
-            left: true,
-            right: true
-        };
+        this.rimBottom = this.scene.physics.add.image(0, 10, "rim2")
+            .setImmovable(true)
+            .setOrigin(0.5, 0.5);
+        (this.rimBottom.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
+        (this.rimBottom.body as Phaser.Physics.Arcade.Body).setSize(6, 6).setOffset(65, 0);
+        
 
         const sensorY = 30;  
         this.sensor = this.scene.physics.add.image(0, sensorY, null as any)
@@ -124,8 +139,8 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             none:  false,
             up:    false,   
             down:  true,
-            left:  false,
-            right: false
+            left:  true,
+            right: true
         };
         
         this.defaultNetHeight = this.net.displayHeight;
@@ -138,14 +153,14 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
         this.aimGraphics = this.scene.add.graphics();
         this.aimGraphics.setDepth(10);      
 
-        this.dragZone = (this.scene as Game).getDragZone();
+        this.dragZone = (this.scene).getDragZone();
         this.dragZone.on('dragstart', (pointer: Phaser.Input.Pointer) => {
             if (this.currentState === 'empty') return;
             this.dragStartPoint = new Phaser.Math.Vector2(pointer.x, pointer.y);
         });
 
         this.dragZone.on('drag', (pointer: Phaser.Input.Pointer) => {
-            if (this.currentState == "empty") return;
+            if (!this.dragStartPoint || this.currentState == "empty") return;
             const dx = pointer.x - this.dragStartPoint!.x;
             const dy = pointer.y - this.dragStartPoint!.y;
             const localY = Phaser.Math.Clamp(this.defaultNetHeight + Math.sqrt(dy*dy + dx*dx), this.defaultNetHeight, this.defaultNetHeight*1.5);
@@ -172,21 +187,31 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             this.aimGraphics.clear();
             const points: Phaser.Math.Vector2[] = [];
             const g = this.aimGraphics;
-
             const speed = Math.min(Phaser.Math.Distance.Between(
                 this.dragStartPoint!.x, this.dragStartPoint!.y,
                 pointer.x, pointer.y
             ) * 10, 1300); 
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
+            let vx = Math.cos(angle) * speed;
+            let vy = Math.sin(angle) * speed;
+            let px = this.x;               
+            let py = this.y;
+            let vxi = -vx;                     
+            let vyi = -vy;
             
             const gravityY = this.scene.physics.world.gravity.y; 
-
+            
+            const worldLeft  = this.scene.physics.world.bounds.left;
+            const worldRight = this.scene.physics.world.bounds.right;
+            console.log(worldLeft, worldRight);
             const tStep = 0.05;   // step time
-            for (let t = 0; t < 1.5; t += tStep) {
-                const x = this.x + -vx * t;
-                const y = this.y + -vy * t + 0.5 * 1.15*gravityY * t * t;
-                points.push(new Phaser.Math.Vector2(x, y));
+            const steps = 1.5 / tStep;
+            for (let i = 0; i < steps; i++) {
+                px += vxi * tStep;
+                py += vyi * tStep + 0.5 * gravityY*1.2 * tStep * tStep;
+                vyi += gravityY*1.2 * tStep;
+                if (px <= worldLeft)  { px = worldLeft;  vxi = -vxi; }
+                if (px >= worldRight) { px = worldRight; vxi = -vxi; }
+                points.push(new Phaser.Math.Vector2(px, py));
             }
 
             const maxRadius = 4;        // bán kính điểm đầu
@@ -204,7 +229,7 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
         });
 
         this.dragZone.on('dragend', (pointer: Phaser.Input.Pointer) => {
-            if (this.currentState == "empty") return;
+            if (!this.dragStartPoint || this.currentState == "empty") return;
 
             const dx = pointer.x - this.dragStartPoint!.x;
             const dy = pointer.y - this.dragStartPoint!.y;
@@ -240,5 +265,8 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             }
             this.aimGraphics.clear();
         });
+    }
+    public clearAimGraphics(): void {
+        this.aimGraphics.clear();
     }
 }

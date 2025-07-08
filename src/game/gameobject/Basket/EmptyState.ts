@@ -13,6 +13,7 @@ export default class EmptyState implements IBasketState {
         
         this.basket.getScene().time.delayedCall(200, () => {
             (this.basket.getTopRim().body as Phaser.Physics.Arcade.Body).enable = true;
+            (this.basket.getBottomRim().body as Phaser.Physics.Arcade.Body).enable = true;
             (this.basket.getNet().body as Phaser.Physics.Arcade.Body).enable = true;
             (this.basket.getSensor().body as Phaser.Physics.Arcade.Body).enable = true;
 

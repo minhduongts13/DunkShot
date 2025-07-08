@@ -16,7 +16,7 @@ export default class Star extends Phaser.Physics.Arcade.Image implements IStar {
 
     public disappear(): void {
         const targetY = this.y - 50;
-
+        
         this.scene.tweens.add({
             targets: this,
             y: targetY,
@@ -30,6 +30,7 @@ export default class Star extends Phaser.Physics.Arcade.Image implements IStar {
     }
 
     public spawn(x : number, y: number): void { 
+        (this.body as Phaser.Physics.Arcade.Body).enable = true;
         this.setAlpha(1);
         this.setTexture("star" + Math.floor(Math.random() * 5));
         this.setPosition(x, y);

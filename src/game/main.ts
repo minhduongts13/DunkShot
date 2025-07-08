@@ -1,8 +1,11 @@
 import { Boot } from './scenes/Boot';
-import { GameOver } from './scenes/GameOver';
 import { Game as MainGame } from './scenes/Game';
 import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
+import { Challenge1 } from './scenes/Challenge1';
+import { Challenge2 } from './scenes/Challenge2';
+import Settings from './Manager/Settings';
+import Customize from './scenes/Customize';
 
 //  Find out more information about the Game Config at:
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
@@ -23,12 +26,14 @@ const config: Phaser.Types.Core.GameConfig = {
             debug: true
         }
     },
-    backgroundColor: 'rgb(222,222,222)',
+    backgroundColor: (Settings.get('darkmode') ? '#414141' : '#DEDEDE'),
     scene: [
         Boot,
         Preloader,
         MainGame,
-        GameOver
+        Customize,
+        Challenge1,
+        Challenge2,
     ]
 };
 

@@ -3,62 +3,74 @@ import { Scene } from 'phaser';
 import Ball from '../gameobject/Ball';
 import Basket from '../gameobject/Basket/Basket';
 import Walls from '../gameobject/Walls';
-import MenuLayer from '../Layer/MenuLayer';
+import MenuLayer from '../Layer/Endless/MenuLayer';
 import PointManager from '../Manager/PointManager';
-import HUDLayer from '../Layer/HUDLayer';
+import HUDLayer from '../Layer/Endless/HUDLayer';
 import Star from '../gameobject/Star';
 import { GAMEKEY } from '../../Constant';
-import GameOverLayer from '../Layer/GameOverLayer';
+import GameOverLayer from '../Layer/Endless/GameOverLayer';
+import PauseLayer from '../Layer/PauseLayer';
+import SettingsLayer from '../Layer/Settings';
+import Settings from '../Manager/Settings';
 
-export class Game extends Scene
+export class Game extends Scene implements IGameScene, IHasDragZone
 {
     private camera: Phaser.Cameras.Scene2D.Camera;
     private dragZone : Phaser.GameObjects.Zone;
-    private index1 : number;
-    private index2 : number;
     private basket1: Basket;
     private basket2: Basket;
     private ball: Ball;
-    private positions1: {x: number, angle: number}[];
-    private positions2: {x: number, angle: number}[];
     private layers: ILayer[];
     private money: Phaser.GameObjects.Text;
     private stars: Star[];
     private isGameOver: boolean = false;
+    private is_perfect: boolean = true;
+    private streak = 1;
+    private scoreSound: Phaser.Sound.BaseSound[] = [];
+    private borderSound: Phaser.Sound.BaseSound[] = [];
+    private netSound: Phaser.Sound.BaseSound[] = [];
+    private releaseSound: Phaser.Sound.BaseSound[] = [];
+    private starSound: Phaser.Sound.BaseSound[] = [];
+    private gameOverSound: Phaser.Sound.BaseSound;
+    private walls: Walls;
 
     constructor ()
     {
         super('Game');
     }
 
-    create ()
+    public create (): void
     {
 		const { width, height } = this.scale;
         this.camera = this.cameras.main;
-        this.camera.setBackgroundColor('#DEDEDE');
         this.camera.setBounds(0, -5000, width, height + 5000); 
-        
-        this.index1 = 0;
-        this.index2 = 0;
-
-        this.positions1 = [
-            { x: 80, angle: 15},
-            { x: 110, angle: -10},
-            { x: 100, angle: -10},
-            { x: 90, angle: 15},
-            { x: 100, angle: 20},
-            { x: 120, angle: 15},
-        ]
-
-        this.positions2 = [
-            { x: 250, angle: 15},
-            { x: 250, angle: 10},
-            { x: 260, angle: -20},
-            { x: 240, angle: 0},
-            { x: 230, angle: 15},
-            { x: 250, angle: 0},
-            { x: 260, angle: -25},
-        ]
+        this.camera.setBackgroundColor(Settings.get('darkmode') ? '#414141' : '#DEDEDE');
+        this.events.on('darkmode', () =>{
+            this.camera.setBackgroundColor(Settings.get('darkmode') ? '#414141' : '#DEDEDE');
+        });
+        // Sounds
+        this.scoreSound.push(this.sound.add('score-simple'));
+        for (let i = 1; i <= 10; i++){
+            this.scoreSound.push(this.sound.add(`score-perfect-${i}`));
+        }
+        this.borderSound.push(this.sound.add('border-0'));
+        this.borderSound.push(this.sound.add('border-7'));
+        this.borderSound.push(this.sound.add('border-10'));
+        this.borderSound.push(this.sound.add('border-13'));
+        this.borderSound.push(this.sound.add('border-16'));
+        this.borderSound.push(this.sound.add('border-17'));
+        this.borderSound.push(this.sound.add('border-32'));
+        this.borderSound.push(this.sound.add('border-64'));
+        this.netSound.push(this.sound.add('net-0'));
+        this.netSound.push(this.sound.add('net-1'));
+        this.netSound.push(this.sound.add('net-2'));
+        this.releaseSound.push(this.sound.add('release-1'));
+        this.releaseSound.push(this.sound.add('release-2'));
+        this.releaseSound.push(this.sound.add('release-3'));
+        for (let i = 1; i <= 7; i++){
+            this.starSound.push(this.sound.add(`star-${i}`));
+        }
+        this.gameOverSound = this.sound.add('gameover')
 
         this.physics.world.setBounds(
             15,          // x
@@ -71,14 +83,21 @@ export class Game extends Scene
             false  // collideBottom
         );
 
-        const wall = new Walls(this);
+        this.walls = new Walls(this);
 
         this.dragZone = this.add
             .zone(0, 0, width, height)
             .setOrigin(0)
 			.setScrollFactor(0)
             .setInteractive({ draggable: true });
-        this.ball = new Ball(this, 100, 380, "ball");
+        this.ball = new Ball(this, 100, 380, `ball${Settings.get('ball')}`);
+        this.ball.setCollideWorldBounds(true);
+        const body = this.ball.body as Phaser.Physics.Arcade.Body;
+        body.onWorldBounds = true;
+
+        this.events.on('ball', () =>{
+            this.ball.setTexture(`ball${Settings.get('ball')}`);
+        });
         this.camera.startFollow(this.ball, false, 1, 1, 0, height*0.2);
 
         this.basket1 = new Basket(this, 100, 400, "empty");
@@ -91,17 +110,17 @@ export class Game extends Scene
         this.createBallBasketPhysic(this.basket2, this.ball);
         this.creatStarBallPhysic();
 
-        this.add.image(width - 80, 23, 'star0')
+        this.add.image(width - 80, 30, 'star0')
             
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', () => {});
         this.money = this.add.text(
-            width - 50,
-            10,
-            `x ${PointManager.getMoney()}`,
+            width - 45,
+            20,
+            '0',
             {
-                font: '24px sans-serif',
+                font: '20px sans-serif',
                 color: '#FB8925',
                 align: 'center'
             }
@@ -112,7 +131,10 @@ export class Game extends Scene
         this.layers = [];
         this.layers.push(new HUDLayer(this));
         this.layers.push(new GameOverLayer(this));
+        this.layers.push(new PauseLayer(this));
         this.layers.push(new MenuLayer(this));
+        this.layers.push(new SettingsLayer(this));
+        
     }
 
     public getDragZone(): Phaser.GameObjects.Zone {
@@ -123,8 +145,19 @@ export class Game extends Scene
         return this.layers[index];
     }
 
-    createBallBasketPhysic(basket : Basket, ball : Ball): void {
-        this.physics.add.collider(ball, basket.getTopRim());
+    private createBallBasketPhysic(basket : Basket, ball : Ball): void {
+        this.physics.world.on('worldbounds', () => {
+            this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
+        });
+
+        this.physics.add.collider(ball, basket.getTopRim(), () => {
+            this.is_perfect = false;
+            this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
+        });
+        this.physics.add.collider(ball, basket.getBottomRim(), () => {
+            this.is_perfect = false;
+            this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
+        });
         this.physics.add.collider(
             ball,
             basket.getSensor(),
@@ -135,32 +168,31 @@ export class Game extends Scene
                 (b.body as Phaser.Physics.Arcade.Body).setAllowGravity(false); 
                 b.setPosition(
                     basket.x,
-                    ball.y 
+                    ball.y - 5
                 );
                 basket.shakeNet();
                 ball.setAngularVelocity(0);
+                const randomAngle = Math.floor(Math.random() * (25 - (-25) + 1)) + (-25);
+                const randomX = Math.floor(Math.random() * (300 - 60 + 1)) + 60;
                 if (basket == this.basket1){
                     if (ball.currentBasket == 1) return;
-                    this.basket2.setPosition(this.positions2[this.index2].x, this.basket2.y - 300);
-                    this.basket2.setAngle(this.positions2[this.index2].angle);
-                    this.basket2.customAngle(this.positions2[this.index2].angle*Math.PI/180);
+                    this.basket2.setPosition(randomX, this.basket2.y - 300);
+                    this.basket2.setAngle(randomAngle);
+                    this.basket2.customAngle(randomAngle*Math.PI/180);
                     const pos = this.basket2.getTopRim().getBounds();
                     if (Math.random() < 0.3) this.stars[0].spawn(pos.centerX, pos.centerY - 30);
-                    this.index2++;
                     ball.currentBasket = 1;
                     PointManager.setScore(PointManager.getCurrentScore() + 1);
                     this.scoreAnimation(this.basket1);
                 }
                 else {
                     if (ball.currentBasket == 2) return;
-                    this.basket1.setPosition(this.positions1[this.index1].x, this.basket1.y - 300);
-                    this.basket1.setAngle(this.positions1[this.index1].angle);
-                    this.basket1.customAngle(this.positions1[this.index1].angle*Math.PI/180);
+                    this.basket1.setPosition(randomX, this.basket1.y - 300);
+                    this.basket1.setAngle(randomAngle);
+                    this.basket1.customAngle(randomAngle*Math.PI/180);
                     const pos = this.basket1.getTopRim().getBounds();
                     if (Math.random() < 0.3) this.stars[1].spawn(pos.centerX, pos.centerY - 30);
-                    this.index1++;
                     ball.currentBasket = 2;
-                    PointManager.setScore(PointManager.getCurrentScore() + 1);
                     this.scoreAnimation(this.basket2);
                 }
             },
@@ -170,7 +202,10 @@ export class Game extends Scene
 
         this.physics.add.collider(
             ball,
-            basket.getNet()
+            basket.getNet(),
+            () => {
+                this.netSound[Math.floor(Math.random()*this.netSound.length)].play();
+            }
         );
 
         basket.on('netdrag', (worldBottom: Phaser.Math.Vector2) => {
@@ -183,6 +218,9 @@ export class Game extends Scene
         });
 
         basket.on('shoot', (data: { angle: number; power: number }) => {
+            if (data.power <= 60) this.releaseSound[0].play();
+            else if (data.power <= 100) this.releaseSound[1].play();
+            else this.releaseSound[2].play();
             basket.transitionTo("empty");
             (ball.body as Phaser.Physics.Arcade.Body).setAllowGravity(true);
             const speed = data.power * 10;
@@ -190,15 +228,18 @@ export class Game extends Scene
                 Math.cos(data.angle) * speed,
                 Math.sin(data.angle) * speed
             );
+        
             ball.setAngularVelocity(360);
         });
     }
 
-    creatStarBallPhysic(): void {
+    private creatStarBallPhysic(): void {
         this.stars.forEach((star: Star) => {
             this.physics.add.overlap(
                 this.ball, star,
                 () => {
+                    this.starSound[Math.floor(Math.random()*this.starSound.length)].play();
+                    (star.body as Phaser.Physics.Arcade.Body).enable = false;
                     star.disappear();
                     PointManager.setMoney(PointManager.getMoney() + 1);
                 }
@@ -206,7 +247,12 @@ export class Game extends Scene
         });
     }
 
-    scoreAnimation(basket: Basket): void {
+    private scoreAnimation(basket: Basket): void {
+        if (this.is_perfect) this.streak = Math.min(10, this.streak + 1);
+        else this.streak = 1;
+        PointManager.setScore(PointManager.getCurrentScore() + this.streak);
+        this.scoreSound[this.streak - 1].play();
+
         const rimTopOriginal = basket.getTopRim();
         const rimBottomOriginal = basket.getBottomRim();
 
@@ -234,31 +280,85 @@ export class Game extends Scene
                 (targets as Phaser.GameObjects.Image[]).forEach((img: Phaser.GameObjects.Image) => img.destroy());
             }
         });
-
-        const plus = this.add.text(topPos.x, topPos.y - 20, '+1', {
-            font: '28px sans-serif',
-            color: '#ff8800',
-        })
+        if (this.is_perfect){
+            const perfect = this.add.text(topPos.x, topPos.y - 20, `Perfect`, {
+                font: '28px sans-serif',
+                color: '#ff8800',
+            })
             .setOrigin(0.5)
             .setDepth(101);
-
-        this.tweens.add({
-            targets: plus,
-            y: plus.y - 40,
-            alpha: 0,
-            ease: 'Sine.easeOut',
-            duration: 600,
-            onComplete: () => plus.destroy()
-        });
+            this.tweens.add({
+                targets: perfect,
+                y: perfect.y - 40,
+                alpha: 0,
+                ease: 'Sine.easeOut',
+                duration: 700,
+                onComplete: () => perfect.destroy()
+            });
+        }
+        this.time.delayedCall(200, () => {
+            const plus = this.add.text(topPos.x, topPos.y - 20, `+${this.streak}`, {
+                font: '28px sans-serif',
+                color: '#ff8800',
+            })
+                .setOrigin(0.5)
+                .setDepth(101);
+            
+            this.tweens.add({
+                targets: plus,
+                y: plus.y - 40,
+                alpha: 0,
+                ease: 'Sine.easeOut',
+                duration: 700,
+                onComplete: () => plus.destroy()
+            });
+        })
+        this.is_perfect = true;
     }
 
     update(time: number, delta: number) {
         if (this.isGameOver) return;
-        const camBottom = this.camera.scrollY + this.scale.height;
-        if (this.ball.y > camBottom) {
+        this.money.setText(`x ${PointManager.getMoney()}`);
+        const ballScreenY = this.ball.y - this.camera.scrollY;
+
+        if (this.ball.y > Math.max(this.basket1.y, this.basket2.y) + 40) {
+            this.camera.stopFollow();
+        }
+        if (ballScreenY > this.scale.height) {
             this.isGameOver = true;
+            this.gameOverSound.play();
             this.layers[0].fadeOut();
             this.layers[1].fadeIn();
+            PointManager.checkHighScore();
+            PointManager.saveMoney();
+            PointManager.resetScore();
         }
+    }
+
+    public reset(): void {
+        this.isGameOver = false;
+        // this.camera.stopFollow();
+        this.camera.setScroll(0, 0);
+        this.basket1.setPosition(GAMEKEY.BASKET1.INITIAL_POS.x, GAMEKEY.BASKET1.INITIAL_POS.y);
+        this.basket1.setAngle(0);
+        this.basket1.customAngle(0);
+        this.basket2.setPosition(GAMEKEY.BASKET2.INITIAL_POS.x, GAMEKEY.BASKET2.INITIAL_POS.y);
+        this.basket2.setAngle(0);
+        this.basket2.customAngle(0);
+        this.stars.forEach((star : Star) => star.disappear());
+        this.ball.setPosition(GAMEKEY.BALL.INITIAL_POS.x, GAMEKEY.BALL.INITIAL_POS.y);
+        this.ball.setVelocity(0, 0);
+        this.ball.currentBasket = 1;
+        this.camera.startFollow(this.ball, false, 1, 1, 0, this.scale.height * 0.2);
+        this.is_perfect = true;
+        this.streak = 1;
+    }
+
+    public pauseScene(): void {
+        
+    }
+
+    public resumeScene(): void {
+        
     }
 }

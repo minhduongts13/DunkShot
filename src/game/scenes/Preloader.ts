@@ -1,4 +1,6 @@
 import { Scene } from 'phaser';
+import PointManager from '../Manager/PointManager';
+import Settings from '../Manager/Settings';
 
 export class Preloader extends Scene
 {
@@ -9,21 +11,41 @@ export class Preloader extends Scene
 
     init ()
     {
-        //  We loaded this image in our Boot Scene, so we can display it here
-        this.add.image(512, 384, 'background');
+        const { width, height } = this.scale;
 
-        //  A simple progress bar. This is the outline of the bar.
-        this.add.rectangle(512, 384, 468, 32).setStrokeStyle(1, 0xffffff);
+        this.cameras.main.setBackgroundColor('#333');
 
-        //  This is the progress bar itself. It will increase in size from the left based on the % of progress.
-        const bar = this.add.rectangle(512-230, 384, 4, 28, 0xffffff);
+        this.add.image(width/2, height*0.3, 'menu-logo')
+            .setOrigin(0.5)
+            .setScale(0.6);
 
-        //  Use the 'progress' event emitted by the LoaderPlugin to update the loading bar
-        this.load.on('progress', (progress: number) => {
+        const barWidth = width * 0.6;
+        const barHeight = 24;
+        const barX = (width - barWidth) / 2;
+        const barY = height * 0.6;
 
-            //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
-            bar.width = 4 + (460 * progress);
+        const graphicsBg = this.add.graphics();
+        graphicsBg.fillStyle(0x222222, 0.8);
+        graphicsBg.fillRoundedRect(barX, barY, barWidth, barHeight, 8);
 
+        const graphicsBar = this.add.graphics();
+
+        const percentText = this.add.text(width/2, barY - 20, '0%', {
+            font: '18px Arial',
+            color: '#ffffff'
+        }).setOrigin(0.5);
+
+        this.load.on('progress', (p: number) => {
+            graphicsBar.clear();
+            graphicsBar.fillStyle(0xffffff, 1);
+            graphicsBar.fillRoundedRect(
+                barX + 4,
+                barY + 4,
+                (barWidth - 8) * p,
+                barHeight - 8,
+                6
+            );
+            percentText.setText(`${Math.round(p * 100)}%`);
         });
     }
 
@@ -32,11 +54,9 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image("drag-it", "menu/drag-it.png");
-        this.load.image("menu-logo", "menu/menu-logo.png");
-        this.load.image('logo', 'logo.png');
-        this.load.image('ground', 'bg.png');
+        // this.load.image('logo', 'logo.png');
+        // this.load.image('ground', 'bg.png');
         this.load.image('background', 'Background/Background Walls 1.png');
-        this.load.image('ball', 'Balls/ball1.png')
         this.load.image('rim1', 'Basket/Basket1.png');
         this.load.image('rim2', 'Basket/Basket2.png');
         this.load.image('rim3', 'Basket/Basket3.png');
@@ -47,16 +67,65 @@ export class Preloader extends Scene
         this.load.image('settingButton', 'menu/settingButton.png');
         this.load.image('darkmode', 'menu/DarkBulb.png');
         this.load.image('lightmode', 'menu/LightBulb.png');
-        this.load.image('star0', 'game/Collectibles0.png');
-        this.load.image('star1', 'game/Collectibles1.png');
-        this.load.image('star2', 'game/Collectibles2.png');
-        this.load.image('star3', 'game/Collectibles3.png');
-        this.load.image('star4', 'game/Collectibles4.png');
+        this.load.image('star0', 'Game/Collectibles0.png');
+        this.load.image('star1', 'Game/Collectibles1.png');
+        this.load.image('star2', 'Game/Collectibles2.png');
+        this.load.image('star3', 'Game/Collectibles3.png');
+        this.load.image('star4', 'Game/Collectibles4.png');
         this.load.image('newBall', 'menu/newBall.png');
-        this.load.image('pause', 'Game/pause.png');
+        this.load.image('challenge', 'menu/Challenge.png');
+        this.load.image('pause', 'Game/pause2.png');
         this.load.image('settingCircle', 'GameOver/setting.png');
         this.load.image('like', 'GameOver/like.png');
         this.load.image('restart', 'GameOver/restart.png');
+        this.load.image('menu', 'Pause/Menu.png');
+        this.load.image('resume', 'Pause/Resume.png');
+        this.load.image('customize', 'Pause/Customize.png');
+        this.load.image('nextLevel', 'Game/NEXT LEVEL2.png');
+        this.load.image('toggle-on', 'Settings/toggle-on.png');
+        this.load.image('toggle-off', 'Settings/toggle-off.png');
+        this.load.image('back', 'Settings/left.png');
+        for (let i = 1; i <= 20; i++){
+            this.load.image(`ball${i}`, `Balls/ball${i}.png`);
+        }
+        this.load.audio('darkmode-day', 'Sounds/darkmode/day.mp3');
+        this.load.audio('darkmode-night', 'Sounds/darkmode/night.mp3');
+        this.load.audio('shop-buy', 'Sounds/ev_shop_buy.mp3');
+        this.load.audio('shop-lock', 'Sounds/ev_shop_locked.mp3');
+        this.load.audio('shop-select', 'Sounds/ev_shop_select.mp3');
+        this.load.audio('score-simple', 'Sounds/ev_score_simple.mp3');
+        for (let i = 1; i <= 10; i++){
+            this.load.audio(`score-perfect-${i}`, `Sounds/ev_score_perfect_${i}.mp3`);
+        }
+        this.load.audio('logo', 'Sounds/theme_sounds/christmas/ev_logo.mp3');
+        this.load.audio('border-0', 'Sounds/ev_border_ball_0.mp3');
+        this.load.audio('border-7', 'Sounds/ev_border_ball_7.mp3');
+        this.load.audio('border-10', 'Sounds/ev_border_ball_10.mp3');
+        this.load.audio('border-13', 'Sounds/ev_border_ball_13.mp3');
+        this.load.audio('border-16', 'Sounds/ev_border_ball_16.mp3');
+        this.load.audio('border-17', 'Sounds/ev_border_ball_17.mp3');
+        this.load.audio('border-32', 'Sounds/ev_border_ball_32.mp3');
+        this.load.audio('border-64', 'Sounds/ev_border_ball_0.mp3');
+        this.load.audio('net-0', 'Sounds/ev_collision_net_0.mp3');
+        this.load.audio('net-1', 'Sounds/ev_collision_net_1.mp3');
+        this.load.audio('net-2', 'Sounds/ev_collision_net_2.mp3');
+        this.load.audio('release-1', 'Sounds/ev_release_low.mp3');
+        this.load.audio('release-2', 'Sounds/ev_release_mid.mp3');
+        this.load.audio('release-3', 'Sounds/ev_release_high.mp3');
+        this.load.audio('star-1', 'Sounds/ev_star_multiplier_2.mp3');
+        this.load.audio('star-2', 'Sounds/ev_star_multiplier_3.mp3');
+        this.load.audio('star-3', 'Sounds/ev_star_multiplier_4.mp3');
+        this.load.audio('star-4', 'Sounds/ev_coin.mp3');
+        this.load.audio('star-5', 'Sounds/ev_coin_green.mp3');
+        this.load.audio('star-6', 'Sounds/ev_coin_red.mp3');
+        this.load.audio('star-7', 'Sounds/ev_coin_purple.mp3');
+        this.load.audio('gameover', 'Sounds/burn_on_basket_touch.mp3');
+        this.load.audio('outtime', 'Sounds/timer_buzz.mp3');
+        this.load.audio('timer-1', 'Sounds/timer_1.mp3');
+        this.load.audio('timer-2', 'Sounds/timer_2.mp3');
+        this.load.audio('confetti-1', 'Sounds/confetti_burst_1.mp3');
+        this.load.audio('confetti-2', 'Sounds/ev_confetti_melody.mp3');
+        
     }
 
     create ()
@@ -65,6 +134,10 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('Game');
+        PointManager.init();
+        Settings.init();
+        // this.time.delayedCall(5000, () => {
+            this.scene.start('Game');
+        // });
     }
 }

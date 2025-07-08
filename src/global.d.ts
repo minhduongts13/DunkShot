@@ -84,6 +84,7 @@ interface IBasket {
     public getNet(): Phaser.GameObjects.Image;
     public getScene(): Phaser.Scene;
     public getCurrentState(): string;
+    public clearAimGraphics(): void;
 
 }
 
@@ -111,7 +112,16 @@ interface IPointManager {
 }
 
 interface IGameScene {
-    public getLayers(index: number): Phaser.GameObjects.Layer;
+    public getLayers(index: number): ILayer;
+    public getDragZone(): Phaser.GameObjects.Zone;
+    public reset(): void;
+    public create (): void;
+    public update(time: number, delta: number): void;
+    public pauseScene(): void;
+    public resumeScene(): void;
+}
+
+interface IHasDragZone {
     public getDragZone(): Phaser.GameObjects.Zone;
 }
 

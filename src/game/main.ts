@@ -23,7 +23,7 @@ const config: Phaser.Types.Core.GameConfig = {
         default: 'arcade',
         arcade: {
             gravity: { x: 0, y: 1500 },
-            debug: true
+            // debug: true
         }
     },
     backgroundColor: (Settings.get('darkmode') ? '#414141' : '#DEDEDE'),

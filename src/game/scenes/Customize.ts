@@ -120,11 +120,11 @@ export default class Customize extends Phaser.Scene {
                 // nhớ push vào mảng để có thể destroy sau khi mua
                 this.priceTags.push(tagContainer);
                 circle.setInteractive({ useHandCursor: true });
-                circle.on('pointerup', () => this.onIconClicked(i + 1));
+                circle.on('pointerdown', () => this.onIconClicked(i + 1));
             } else {
                 this.overlays.push(null as any);
                 this.priceTexts.push(null as any);
-                img.on('pointerup', () => this.onIconClicked(i + 1));
+                img.on('pointerdown', () => this.onIconClicked(i + 1));
             }
 
             // click handler

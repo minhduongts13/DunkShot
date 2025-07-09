@@ -176,7 +176,7 @@ export class Game extends Scene implements IGameScene, IHasDragZone
                 const randomX = Math.floor(Math.random() * (300 - 60 + 1)) + 60;
                 if (basket == this.basket1){
                     if (ball.currentBasket == 1) return;
-                    this.basket2.setPosition(randomX, this.basket2.y - 300);
+                    this.basket2.setPosition(randomX, this.basket1.y - 200);
                     this.basket2.setAngle(randomAngle);
                     this.basket2.customAngle(randomAngle*Math.PI/180);
                     const pos = this.basket2.getTopRim().getBounds();
@@ -187,7 +187,7 @@ export class Game extends Scene implements IGameScene, IHasDragZone
                 }
                 else {
                     if (ball.currentBasket == 2) return;
-                    this.basket1.setPosition(randomX, this.basket1.y - 300);
+                    this.basket1.setPosition(randomX, this.basket2.y - 200);
                     this.basket1.setAngle(randomAngle);
                     this.basket1.customAngle(randomAngle*Math.PI/180);
                     const pos = this.basket1.getTopRim().getBounds();

@@ -60,9 +60,13 @@ export default class MenuLayer extends Phaser.GameObjects.Layer implements ILaye
 			.on('pointerdown', () => {
 				Settings.add('darkmode', !Settings.get('darkmode'));
 				if (Settings.get('darkmode')){
+					this.darkmodeBtn.setTexture('darkmode');
 					this.darkmodeSound[1].play();
 				}
-				else this.darkmodeSound[0].play();
+				else {
+					this.darkmodeSound[0].play();
+					this.darkmodeBtn.setTexture('lightmode');
+				}
                 scene.events.emit('darkmode');
 			});
 		this.add(this.darkmodeBtn);

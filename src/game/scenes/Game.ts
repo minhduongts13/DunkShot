@@ -326,12 +326,12 @@ export class Game extends Scene implements IGameScene, IHasDragZone
         }
         if (ballScreenY > this.scale.height) {
             this.isGameOver = true;
-            this.gameOverSound.play();
-            this.layers[0].fadeOut();
-            this.layers[1].fadeIn();
             PointManager.checkHighScore();
             PointManager.saveMoney();
+            this.gameOverSound.play();
             PointManager.resetScore();
+            this.layers[0].fadeOut();
+            this.layers[1].fadeIn();
         }
     }
 

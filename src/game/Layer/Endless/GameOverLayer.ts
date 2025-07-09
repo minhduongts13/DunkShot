@@ -121,6 +121,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
     }
 
     public fadeIn(duration: number = 300) {
+        this.highScoreText2.setText(`${PointManager.getHighScore()}`);
         this.setVisible(true);
         this.setAlpha(0);
         this.scene.tweens.add({

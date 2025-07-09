@@ -58,8 +58,9 @@ export default class PauseLayer extends Phaser.GameObjects.Layer implements ILay
                 scene.scene.start('Game');
             },
             () => {
-                this.fadeOut();
-                scene.scene.start('Customize')
+                // this.fadeOut();
+                scene.scene.pause('Game')
+                scene.scene.launch('Customize');
             },
             () => {
                 this.fadeOut();

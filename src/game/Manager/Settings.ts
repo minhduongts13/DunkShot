@@ -6,7 +6,12 @@ class Settings {
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i)!;
             const value = localStorage.getItem(key)!;
-            this.prop[key] = JSON.parse(value);
+            try {
+                this.prop[key] = JSON.parse(value);
+            } catch {
+                this.prop[key] = value;
+            }
+
         }
         if (!localStorage.getItem('ball')) this.add('ball', 1);
         if (!localStorage.getItem('darkmode')) this.add('darkmode', false);

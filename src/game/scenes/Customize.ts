@@ -8,11 +8,13 @@ export default class Customize extends Phaser.Scene {
     private icons: Phaser.GameObjects.Image[] = [];
     private overlays: Phaser.GameObjects.Arc[] = [];
     private priceTexts: Phaser.GameObjects.Text[] = [];
+    private priceTags: Phaser.GameObjects.Container[] = [];
     private selectedFrame?: Phaser.GameObjects.Arc;
     private title!: Phaser.GameObjects.Text;
     private back: Phaser.GameObjects.Image;
     private starCount!: Phaser.GameObjects.Text;
     private sounds : Phaser.Sound.BaseSound[] = [];
+    private isshaking: boolean = false;
     constructor() {
         super('Customize');
     }
@@ -42,7 +44,7 @@ export default class Customize extends Phaser.Scene {
             titleBg.setFillStyle(Settings.get('darkmode') ? 0x393939: 0xC4C4C4);
         });
 
-        this.title = this.add.text(width / 2, 13, 'SETTINGS', { font: '24px sans-serif', color: '#ffffff' })
+        this.title = this.add.text(width / 2, 13, 'CUSTOMIZE', { font: '24px sans-serif', color: '#ffffff' })
             .setOrigin(0.5, 0)
             .setScrollFactor(0);
 
@@ -96,6 +98,27 @@ export default class Customize extends Phaser.Scene {
                     color: '#ffffff'
                 }).setOrigin(0.5);
                 this.priceTexts.push(question);
+                const tagContainer = this.add.container(0, 0);
+                // 3a) Pill background
+                const tagW = 60, tagH = 24;
+                const tagY = y + baseRadius + 12; // đẩy xuống dưới vòng một chút
+                const bg = this.add.graphics();
+                bg.fillStyle(0xFB8925, 1);
+                bg.fillRoundedRect(x - tagW/2, tagY - tagH/2, tagW, tagH, tagH/2);
+                // 3b) Star icon
+                const star = this.add.image(x - tagW/2 + 12, tagY, 'star0')
+                    .setScale(0.5)
+                    .setOrigin(0.5, 0.5);
+                // 3c) Price text
+                const priceText = this.add.text(x - tagW/2 + 35, tagY, '100', {
+                    font: '16px sans-serif',
+                    color: '#ffffff'
+                }).setOrigin(0.5, 0.5);
+
+                tagContainer.add([ bg, star, priceText ]);
+                tagContainer.setDepth(1);
+                // nhớ push vào mảng để có thể destroy sau khi mua
+                this.priceTags.push(tagContainer);
                 circle.setInteractive({ useHandCursor: true });
                 circle.on('pointerup', () => this.onIconClicked(i + 1));
             } else {
@@ -113,6 +136,7 @@ export default class Customize extends Phaser.Scene {
     }
 
     private onIconClicked(index: number) {
+        console.log(1)
         const money = PointManager.getMoney();
         const bought = Settings.get(`ball${index}`) === true;
 
@@ -129,9 +153,11 @@ export default class Customize extends Phaser.Scene {
         if (money >= 100) {
             PointManager.setMoney(money - 100);
             this.starCount.setText(`${PointManager.getMoney()}`);
+            PointManager.saveMoney();
             Settings.add(`ball${index}`, true);
             // xoá overlay và text
             this.overlays[index - 1].destroy();
+            this.priceTags[index - 2].destroy();
             this.priceTexts[index - 1].destroy();
             this.icons[index - 1].setVisible(true);
             // chọn luôn
@@ -140,13 +166,18 @@ export default class Customize extends Phaser.Scene {
             this.drawSelection(index - 1);
             this.sounds[0].play();
         } else {
+            if (this.isshaking) return;
+            this.isshaking = true;
             this.sounds[1].play();
             this.tweens.add({
                 targets: this.starCount,
-                x: this.starCount.x - 10,
+                x: '-=10',
                 yoyo: true,
                 repeat: 2,
-                duration: 100
+                duration: 100,
+                onComplete: () => {
+                    this.isshaking = false;
+                }
             });
         }
     }

@@ -87,7 +87,7 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
         const rightOffsetY = rightLocal.y + h/2;
 
         bodyTop.setOffset(leftOffsetX, leftOffsetY + 10);
-        bodyBot.setOffset(rightOffsetX + 10, rightOffsetY);
+        bodyBot.setOffset(rightOffsetX + 8, rightOffsetY);
     }
 
     private create(config?: BasketConfig): void{
@@ -96,19 +96,19 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             .setOrigin(0.5, 0.5);
             
         (this.rimTop.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(6, 6).setOffset(0, 10);
+        (this.rimTop.body as Phaser.Physics.Arcade.Body).setSize(3, 3).setOffset(0, 10);
         
         this.rimBottom = this.scene.physics.add.image(0, 10, "rim2")
             .setImmovable(true)
             .setOrigin(0.5, 0.5);
         (this.rimBottom.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-        (this.rimBottom.body as Phaser.Physics.Arcade.Body).setSize(6, 6).setOffset(65, 0);
+        (this.rimBottom.body as Phaser.Physics.Arcade.Body).setSize(3, 3).setOffset(65, 0);
         
 
-        const sensorY = 30;  
+        const sensorY = 25;  
         this.sensor = this.scene.physics.add.image(0, sensorY, null as any)
             .setImmovable(true)
-            .setSize(70, 5)
+            .setSize(30, 5)
             .setOrigin(0.5, 0)
             .setVisible(false);
         (this.sensor.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);

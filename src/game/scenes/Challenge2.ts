@@ -196,7 +196,7 @@ export class Challenge2 extends Scene implements IGameScene, IHasDragZone
                 (b.body as Phaser.Physics.Arcade.Body).setAllowGravity(false); 
                 b.setPosition(
                     basket.x,
-                    ball.y - 5
+                    ball.y 
                 );
                 basket.shakeNet();
                 ball.setAngularVelocity(0);
@@ -345,7 +345,7 @@ export class Challenge2 extends Scene implements IGameScene, IHasDragZone
         const ballScreenY = this.ball.y - this.camera.scrollY;
 
         if (this.ball.y > this.baskets[this.ball.currentBasket].y + 40) {
-            this.camera.stopFollow();
+            // this.camera.stopFollow();
         }
         if (ballScreenY > this.scale.height) {
             this.gameOverSound.play()

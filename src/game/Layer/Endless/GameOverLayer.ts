@@ -82,7 +82,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
-            .on('pointerdown', () => scene.getLayers(GAMEKEY.SCENE.GAME.LAYERKEY.SETTINGS).fadeIn());
+            .on('pointerdown', () => window.open('https://www.facebook.com/minhduongts13', '_blank'));
         this.add(this.likeBtn);
 
         this.restartBtn = scene.add
@@ -100,7 +100,10 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
-            .on('pointerdown', () => scene.getLayers(GAMEKEY.SCENE.GAME.LAYERKEY.SETTINGS).fadeIn());
+            .on('pointerdown', () => {
+                scene.scene.pause('Game')
+                scene.scene.launch('Customize');
+            });
         this.add(this.newBallBtn);
 
 

@@ -168,7 +168,7 @@ export class Game extends Scene implements IGameScene, IHasDragZone
                 (b.body as Phaser.Physics.Arcade.Body).setAllowGravity(false); 
                 b.setPosition(
                     basket.x,
-                    ball.y - 5
+                    ball.y
                 );
                 basket.shakeNet();
                 ball.setAngularVelocity(0);

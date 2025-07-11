@@ -2,8 +2,7 @@ import { Boot } from './scenes/Boot';
 import { Game as MainGame } from './scenes/Game';
 import { AUTO, Game } from 'phaser';
 import { Preloader } from './scenes/Preloader';
-import { Challenge1 } from './scenes/Challenge1';
-import { Challenge2 } from './scenes/Challenge2';
+import { Challenge } from './scenes/Challenge';
 import Settings from './Manager/Settings';
 import Customize from './scenes/Customize';
 
@@ -11,7 +10,7 @@ import Customize from './scenes/Customize';
 //  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
-    width: 360,
+    width: 384,
     height: 640,
     parent: 'game-container',
     scale: {
@@ -32,8 +31,7 @@ const config: Phaser.Types.Core.GameConfig = {
         Preloader,
         MainGame,
         Customize,
-        Challenge1,
-        Challenge2,
+        Challenge,
     ]
 };
 

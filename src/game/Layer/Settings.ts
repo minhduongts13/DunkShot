@@ -13,6 +13,7 @@ export default class SettingsLayer extends Phaser.GameObjects.Layer implements I
 
     constructor(scene: Phaser.Scene & IGameScene) {
         super(scene);
+        this.setDepth(100);
         this.setVisible(false);
         const { width, height } = scene.scale;
         // Sounds
@@ -23,7 +24,7 @@ export default class SettingsLayer extends Phaser.GameObjects.Layer implements I
 			.rectangle(0, 0, width, height, 0x000000, 0)
 			.setOrigin(0)
 			.setScrollFactor(0)
-			.setInteractive();   // <-- đây sẽ "ăn" mọi sự kiện
+			.setInteractive();   
 		this.add(blocker);
 
         // Background panel
@@ -40,7 +41,6 @@ export default class SettingsLayer extends Phaser.GameObjects.Layer implements I
         scene.events.on('darkmode', () =>{
             titleBg.setFillStyle(Settings.get('darkmode') ? 0x393939: 0xC4C4C4);
         });
-            // .setOrigin(0.5, 0.5);
         this.add(titleBg);
         this.title = scene.add.text(width / 2, 13, 'SETTINGS', { font: '24px sans-serif', color: '#ffffff' })
             .setOrigin(0.5, 0)
@@ -132,7 +132,7 @@ export default class SettingsLayer extends Phaser.GameObjects.Layer implements I
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', () => {
                 PointManager.clearData();
-                console.log("clicked")
+                window.location.reload();
             });
         this.add(buttonText);
 

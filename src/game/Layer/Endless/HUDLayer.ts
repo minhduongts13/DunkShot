@@ -10,6 +10,7 @@ export default class HUDLayer extends Phaser.GameObjects.Layer implements ILayer
 
     constructor(scene: Phaser.Scene & IGameScene) {
         super(scene);
+        this.setDepth(100);
         this.setVisible(false);
         const { width, height } = scene.scale;
 
@@ -33,7 +34,10 @@ export default class HUDLayer extends Phaser.GameObjects.Layer implements ILayer
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
-            .on('pointerdown', () => {scene.getLayers(GAMEKEY.SCENE.GAME.LAYERKEY.PAUSE).fadeIn()});
+            .on('pointerdown', () => {
+                scene.pauseScene(); 
+                scene.getLayers(GAMEKEY.SCENE.GAME.LAYERKEY.PAUSE).fadeIn()
+            });
 		this.add(this.pause);
 
         scene.events.on('update', this.onSceneUpdate, this);
@@ -65,6 +69,9 @@ export default class HUDLayer extends Phaser.GameObjects.Layer implements ILayer
     }
 
     private onSceneUpdate(time: number, delta: number) {
+        if (!this.visible) {
+            return;
+        }
         this.scoreText.setText(PointManager.getCurrentScore().toString());
     }
 }

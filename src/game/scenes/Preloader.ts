@@ -54,8 +54,6 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image("drag-it", "menu/drag-it.png");
-        // this.load.image('logo', 'logo.png');
-        // this.load.image('ground', 'bg.png');
         this.load.image('background', 'Background/Background Walls 1.png');
         this.load.image('rim1', 'Basket/Basket1.png');
         this.load.image('rim2', 'Basket/Basket2.png');
@@ -63,7 +61,6 @@ export class Preloader extends Scene
         this.load.image('rim4', 'Basket/Basket4.png');
         this.load.image('netOrange', 'Basket/OrangeNet.png');
         this.load.image('netWhite', 'Basket/WhiteNet.png');
-        this.load.image('wall', 'menu/wall.png');
         this.load.image('settingButton', 'menu/settingButton.png');
         this.load.image('darkmode', 'menu/DarkBulb.png');
         this.load.image('lightmode', 'menu/LightBulb.png');
@@ -72,6 +69,9 @@ export class Preloader extends Scene
         this.load.image('star2', 'Game/Collectibles2.png');
         this.load.image('star3', 'Game/Collectibles3.png');
         this.load.image('star4', 'Game/Collectibles4.png');
+        this.load.image('star5', 'Game/Collectibles5.png');
+        this.load.image('wall', 'Game/Wall2.png');
+        this.load.image('wall2', 'Game/Wall2horizontal.png');
         this.load.image('newBall', 'menu/newBall.png');
         this.load.image('challenge', 'menu/Challenge.png');
         this.load.image('pause', 'Game/pause2.png');
@@ -88,6 +88,19 @@ export class Preloader extends Scene
         for (let i = 1; i <= 20; i++){
             this.load.image(`ball${i}`, `Balls/ball${i}.png`);
         }
+        this.load.image('btn-giveup', 'Pause/giveup.png');
+        this.load.image('btn-restart', 'Pause/restart.png');
+        this.load.image('btn-close', 'Pause/close.png');
+        this.load.image('btn-play', 'Pause/play.png');
+        this.load.image('btn-ok', 'Pause/ok.png');
+        this.load.image('intro-challenge-ui', 'Menu/ui-bg.png');
+        this.load.image('particle-smoke', 'Game/smoke.png');
+        this.load.image('particle-fire', 'Game/fire.png');
+        this.load.image('flash1', 'Game/flash1.png')
+        this.load.image('flash2', 'Game/flash2.png')
+        this.load.image('flash3', 'Game/flash3.png')
+
+        // audio
         this.load.audio('darkmode-day', 'Sounds/darkmode/day.mp3');
         this.load.audio('darkmode-night', 'Sounds/darkmode/night.mp3');
         this.load.audio('shop-buy', 'Sounds/ev_shop_buy.mp3');
@@ -125,7 +138,14 @@ export class Preloader extends Scene
         this.load.audio('timer-2', 'Sounds/timer_2.mp3');
         this.load.audio('confetti-1', 'Sounds/confetti_burst_1.mp3');
         this.load.audio('confetti-2', 'Sounds/ev_confetti_melody.mp3');
-        
+        this.load.audio('start-fire', 'Sounds/burn_start.mp3');
+        this.load.audio('fire-shot1', 'Sounds/ev_fireball_release_1.mp3');
+        this.load.audio('fire-shot2', 'Sounds/ev_fireball_release_2.mp3');
+        this.load.audio('fire-shot3', 'Sounds/ev_fireball_release_3.mp3');
+
+        // map
+        this.load.json('challenge1-data', 'maps/challenge1.tmj');
+        this.load.json('challenge2-data', 'maps/challenge2.tmj');
     }
 
     create ()

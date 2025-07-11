@@ -119,6 +119,8 @@ interface IGameScene {
     public update(time: number, delta: number): void;
     public pauseScene(): void;
     public resumeScene(): void;
+    public endGame(ending : number): void;
+    public reset(): void;
 }
 
 interface IHasDragZone {
@@ -134,4 +136,10 @@ interface ILayer {
     fadeIn(): void;
     fadeOut(): void;
 
+}
+
+interface IChallengeScene {
+    public getCurrentHoop(): number;
+    public getNumHoop(): number;
+    public getTimeLimit(): number;
 }

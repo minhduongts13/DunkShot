@@ -99,17 +99,17 @@ export default class Customize extends Phaser.Scene {
                 }).setOrigin(0.5);
                 this.priceTexts.push(question);
                 const tagContainer = this.add.container(0, 0);
-                // 3a) Pill background
+                
                 const tagW = 60, tagH = 24;
-                const tagY = y + baseRadius + 12; // đẩy xuống dưới vòng một chút
+                const tagY = y + baseRadius + 12; 
                 const bg = this.add.graphics();
                 bg.fillStyle(0xFB8925, 1);
                 bg.fillRoundedRect(x - tagW/2, tagY - tagH/2, tagW, tagH, tagH/2);
-                // 3b) Star icon
+                
                 const star = this.add.image(x - tagW/2 + 12, tagY, 'star0')
                     .setScale(0.5)
                     .setOrigin(0.5, 0.5);
-                // 3c) Price text
+    
                 const priceText = this.add.text(x - tagW/2 + 35, tagY, '100', {
                     font: '16px sans-serif',
                     color: '#ffffff'
@@ -117,7 +117,7 @@ export default class Customize extends Phaser.Scene {
 
                 tagContainer.add([ bg, star, priceText ]);
                 tagContainer.setDepth(1);
-                // nhớ push vào mảng để có thể destroy sau khi mua
+                
                 this.priceTags.push(tagContainer);
                 circle.setInteractive({ useHandCursor: true });
                 circle.on('pointerdown', () => this.onIconClicked(i + 1));
@@ -126,8 +126,6 @@ export default class Customize extends Phaser.Scene {
                 this.priceTexts.push(null as any);
                 img.on('pointerdown', () => this.onIconClicked(i + 1));
             }
-
-            // click handler
         }
 
         // selection frame
@@ -155,11 +153,14 @@ export default class Customize extends Phaser.Scene {
             this.starCount.setText(`${PointManager.getMoney()}`);
             PointManager.saveMoney();
             Settings.add(`ball${index}`, true);
-            // xoá overlay và text
             this.overlays[index - 1].destroy();
             this.priceTags[index - 2].destroy();
             this.priceTexts[index - 1].destroy();
-            this.icons[index - 1].setVisible(true);
+            const icon = this.icons[index - 1];
+            icon.setVisible(true);
+            icon.setInteractive({ useHandCursor: true });
+            icon.off('pointerdown'); 
+            icon.on('pointerdown', () => this.onIconClicked(index));
             // chọn luôn
             Settings.add('ball', index);
             this.emitEvent();
@@ -187,16 +188,15 @@ export default class Customize extends Phaser.Scene {
 
         const img = this.icons[index];
         this.selectedFrame = this.add.circle(
-        img.x, img.y,
-        img.width * 0.1 * 0.75,
-        0xffff00, 0).setStrokeStyle(3, 0xffff00);
+            img.x, img.y,
+            img.width * 0.1 * 0.75,
+            0xffff00, 0
+        )
+            .setStrokeStyle(3, 0xffff00);
         this.selectedFrame.setDepth(1);
     }
 
     private emitEvent(): void {
         this.scene.get('Game').events.emit('ball');
-        this.scene.get('Challenge1').events.emit('ball');
-        this.scene.get('Challenge2').events.emit('ball');
-
     }
 }

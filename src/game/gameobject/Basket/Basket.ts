@@ -89,6 +89,19 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
         bodyTop.setOffset(leftOffsetX, leftOffsetY + 10);
         bodyBot.setOffset(rightOffsetX + 8, rightOffsetY);
     }
+    public getWorldBottom(): {x : number, y : number}{
+        const netBottomLocal = new Phaser.Math.Vector2(
+                this.net.x,
+                this.net.y + this.defaultNetHeight * 1*0.5
+            );
+            Phaser.Math.Rotate(netBottomLocal, this.rotation);
+
+            const worldBottom = new Phaser.Math.Vector2(
+                this.x + netBottomLocal.x,
+                this.y + netBottomLocal.y
+            );
+        return worldBottom;
+    }
 
     private create(config?: BasketConfig): void{
         this.rimTop = this.scene.physics.add.image(0, 0, "rim1")
@@ -108,7 +121,7 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
         const sensorY = 25;  
         this.sensor = this.scene.physics.add.image(0, sensorY, null as any)
             .setImmovable(true)
-            .setSize(30, 5)
+            .setSize(40, 5)
             .setOrigin(0.5, 0)
             .setVisible(false);
         (this.sensor.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);

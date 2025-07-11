@@ -2,7 +2,6 @@
 import Phaser from 'phaser';
 import { Game } from '../../scenes/Game';
 import HUDLayer from '../Endless/HUDLayer';
-import PointManager from '../../Manager/PointManager';
 import { GAMEKEY } from '../../../Constant';
 import Settings from '../../Manager/Settings';
 
@@ -19,6 +18,7 @@ export default class MenuLayer extends Phaser.GameObjects.Layer implements ILaye
 
 	constructor(scene: Phaser.Scene & IGameScene) {
 		super(scene);
+        this.setDepth(100);
 		this.setVisible(false);
 		const { width, height } = scene.scale;
 		// Sounds
@@ -90,8 +90,13 @@ export default class MenuLayer extends Phaser.GameObjects.Layer implements ILaye
 			.setInteractive({ useHandCursor: true })
 			.on('pointerdown', () => {
 				scene.scene.pause('Game');
-				scene.scene.launch(`Challenge${PointManager.getCurrentLevel()}`)}
-			);
+				scene.scene.setVisible(false);
+				if (this.scene.scene.isPaused('Challenge')){
+					scene.scene.setVisible(true, 'Challenge');
+					scene.scene.resume('Challenge')
+				}
+				else scene.scene.launch(`Challenge`)
+			});
 			
 		this.add(this.challengeBtn);
 

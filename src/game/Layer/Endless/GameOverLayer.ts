@@ -17,6 +17,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
 
     constructor(scene: Phaser.Scene & IGameScene) {
         super(scene);
+        this.setDepth(100);
 		this.setVisible(false);
         const { width, height } = scene.scale;
         const blocker = scene.add
@@ -26,7 +27,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
 			.setInteractive();   // <-- đây sẽ "ăn" mọi sự kiện
 		this.add(blocker);
         this.highScoreText1 = scene.add.text(
-            180,
+            width/2,
             20,
             'Best Score',
             {
@@ -39,7 +40,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
             .setScrollFactor(0);
 
         this.highScoreText2 = scene.add.text(
-            180,
+            width/2,
             45,
             `${PointManager.getHighScore()}`,
             {
@@ -55,22 +56,22 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
 
 
         this.scoreText = scene.add.text(
-                    width / 2,
-                    90,
-                    `${PointManager.getCurrentScore()}`,
-                    {
-                        font: '48px sans-serif',
-                        color: '#B2B2B2',
-                        align: 'center'
-                    }
-                )
-                    .setOrigin(0.5, 0)       
-                    .setScrollFactor(0);
+            width / 2,
+            90,
+            `${PointManager.getCurrentScore()}`,
+            {
+                font: '48px sans-serif',
+                color: '#B2B2B2',
+                align: 'center'
+            }
+        )
+            .setOrigin(0.5, 0)       
+            .setScrollFactor(0);
 		this.add(this.scoreText);
         
         // Settings button
         this.settingBtn = scene.add
-            .image(width - 90, height - 120, 'settingCircle')
+            .image(width/2 - 90, height - 120, 'settingCircle')
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
@@ -78,7 +79,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
         this.add(this.settingBtn);
 
         this.likeBtn = scene.add
-            .image(width - 260, height - 120, 'like')
+            .image(width/2 + 90, height - 120, 'like')
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
@@ -86,7 +87,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
         this.add(this.likeBtn);
 
         this.restartBtn = scene.add
-            .image(width - 175, height - 120, 'restart')
+            .image(width/2, height - 120, 'restart')
             .setOrigin(0.5)
             .setScrollFactor(0)
             .setInteractive({ useHandCursor: true })
@@ -95,7 +96,7 @@ export default class GameOverLayer extends Phaser.GameObjects.Layer implements I
 
         // New ball button
         this.newBallBtn = scene.add
-            .image(width - 175, height - 200, 'newBall')
+            .image(width/2, height - 200, 'newBall')
             .setScale(1.4)
             .setOrigin(0.5)
             .setScrollFactor(0)

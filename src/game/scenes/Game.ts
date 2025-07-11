@@ -493,8 +493,8 @@ export class Game extends Scene implements IGameScene, IHasDragZone
             wall.reset();
         })
         this.stars.forEach((star : Star) => star.disappear());
-        this.ball.reset(GAMEKEY.BALL.INITIAL_POS.x, GAMEKEY.BALL.INITIAL_POS.y);
         this.ball.setVelocity(0, 0);
+        this.ball.reset(GAMEKEY.BALL.INITIAL_POS.x, GAMEKEY.BALL.INITIAL_POS.y);
         this.ball.currentBasket = 1;
         this.camera.startFollow(this.ball, false, 1, 1, 0, this.scale.height * 0.2);
         this.is_perfect = true;

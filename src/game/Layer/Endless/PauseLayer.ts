@@ -56,6 +56,7 @@ export default class PauseLayer extends Phaser.GameObjects.Layer implements ILay
         const actions = [
             () => { 
                 this.fadeOut();
+                scene.resumeScene();
                 scene.reset();
                 scene.getLayers(GAMEKEY.SCENE.GAME.LAYERKEY.HUDLAYER).fadeOut();
                 scene.getLayers(GAMEKEY.SCENE.GAME.LAYERKEY.MENU).fadeIn();

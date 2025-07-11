@@ -255,11 +255,11 @@ export class Game extends Scene implements IGameScene, IHasDragZone
 
     private createBallBasketPhysic(basket : Basket, ball : Ball): void {
         this.physics.add.collider(ball, basket.getTopRim(), () => {
-            // this.is_perfect = false;
+            this.is_perfect = false;
             this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
         });
         this.physics.add.collider(ball, basket.getBottomRim(), () => {
-            // this.is_perfect = false;
+            this.is_perfect = false;
             this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
         });
         this.physics.add.collider(
@@ -271,7 +271,7 @@ export class Game extends Scene implements IGameScene, IHasDragZone
                 b.setVelocity(0, 0);
                 (b.body as Phaser.Physics.Arcade.Body).setAllowGravity(false); 
                 
-                b.setPosition(basket.getNet().body?.center.x, ball.y);
+                b.setPosition(basket.x, ball.y);
                 basket.shakeNet();
                 ball.setAngularVelocity(0);
         

@@ -229,77 +229,77 @@ export class Challenge extends Scene implements IGameScene, IHasDragZone
         this.isGameOver = false;
     }
 
-private createBallPhysic(): void {
-    this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body) => {
-        if (body.gameObject !== this.ball) return;
-        this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
-        this.is_bounce = true;
-        const { x, y } = body.center;
-        const center = this.getFlash('flash3');
-        center.setPosition(0, y)
+    private createBallPhysic(): void {
+        this.physics.world.on('worldbounds', (body: Phaser.Physics.Arcade.Body) => {
+            if (body.gameObject !== this.ball) return;
+            this.borderSound[Math.floor(Math.random()*this.borderSound.length)].play();
+            this.is_bounce = true;
+            const { x, y } = body.center;
+            const center = this.getFlash('flash3');
+            center.setPosition(0, y)
+                    .setOrigin(0.5)
+                    .setAngle(0)
+                    .setTint(0xFF8800) 
+                    .setAlpha(1)
+                    .setScale(0.2)
+                    .setVisible(true);
+            if (body.blocked.right){
+                center.setFlipX(true)
+                    .setPosition(this.scale.width - 4, y);
+            }
+            else {
+                center.setFlipX(false)
+                    .setPosition(4, y);
+            }
+            this.tweens.add({
+                targets: center,
+                alpha:  0,
+                scale:  0.4,
+                duration: 100,
+                onComplete: () => center.setVisible(false)
+            });
+            const downFlash  = this.getFlash('flash1');
+            const upFlash = this.getFlash('flash2');
+            [downFlash, upFlash].forEach(f => {
+                f.setPosition(x, y)
                 .setOrigin(0.5)
-                .setAngle(0)
+                .setAlpha(0.5)
                 .setTint(0xFF8800) 
-                .setAlpha(1)
-                .setScale(0.2)
-                .setVisible(true);
-        if (body.blocked.right){
-            center.setFlipX(true)
-                .setPosition(this.scale.width - 4, y);
-        }
-        else {
-            center.setFlipX(false)
-                .setPosition(4, y);
-        }
-        this.tweens.add({
-            targets: center,
-            alpha:  0,
-            scale:  0.4,
-            duration: 100,
-            onComplete: () => center.setVisible(false)
-        });
-        const downFlash  = this.getFlash('flash1');
-        const upFlash = this.getFlash('flash2');
-        [downFlash, upFlash].forEach(f => {
-            f.setPosition(x, y)
-            .setOrigin(0.5)
-            .setAlpha(0.5)
-            .setTint(0xFF8800) 
-            .setVisible(true)
-            .setDepth(9)
-            .setScale(0.3);
-        });
-        let destX = 0;
-        if (body.blocked.right){
-            [downFlash, upFlash].forEach(f => {
-                f.setFlipX(true)
-                .setPosition(this.scale.width - 5, y);
-                destX = this.scale.width - 10;
+                .setVisible(true)
+                .setDepth(9)
+                .setScale(0.3);
             });
-        }
-        else {
-            [downFlash, upFlash].forEach(f => {
-                f.setFlipX(false)
-                .setPosition(5 , y);
+            let destX = 0;
+            if (body.blocked.right){
+                [downFlash, upFlash].forEach(f => {
+                    f.setFlipX(true)
+                    .setPosition(this.scale.width - 5, y);
+                    destX = this.scale.width - 10;
+                });
+            }
+            else {
+                [downFlash, upFlash].forEach(f => {
+                    f.setFlipX(false)
+                    .setPosition(5 , y);
+                });
+            }
+            this.tweens.add({
+                targets: downFlash,
+                x: destX,
+                y: y + 200,
+                alpha: 0,
+                duration: 400,
+                onComplete: () => downFlash.setVisible(false)
             });
-        }
-        this.tweens.add({
-            targets: downFlash,
-            x: destX,
-            y: y + 200,
-            alpha: 0,
-            duration: 400,
-            onComplete: () => downFlash.setVisible(false)
+            this.tweens.add({
+                targets: upFlash,
+                x: destX,
+                y: y - 800,
+                alpha: 0,
+                duration: 400,
+                onComplete: () => upFlash.setVisible(false)
+            });
         });
-        this.tweens.add({
-            targets: upFlash,
-            x: destX,
-            y: y - 800,
-            alpha: 0,
-            duration: 400,
-            onComplete: () => upFlash.setVisible(false)
-        });
-    });
     }
 
     private createBallBasketPhysic(basket : Basket, ball : Ball): void {
@@ -378,7 +378,6 @@ private createBallPhysic(): void {
     private scoreAnimation(basket: Basket): void {
         if (this.is_perfect) this.streak = Math.min(10, this.streak + 1);
         else this.streak = 1;
-        PointManager.setScore(PointManager.getCurrentScore() + this.streak + (this.is_bounce ? 1 : 0));
         this.scoreSound[this.streak - 1].play();
 
         const rimTopOriginal = basket.getTopRim();
@@ -448,23 +447,7 @@ private createBallPhysic(): void {
             });
         }
 
-        this.time.delayedCall(400, () => {
-            const plus = this.add.text(topPos.x, topPos.y - 20, `+${this.streak + (this.is_bounce ? 1 : 0)}`, {
-                font: '28px sans-serif',
-                color: '#ff8800',
-            })
-                .setOrigin(0.5)
-                .setDepth(9);
-            
-            this.tweens.add({
-                targets: plus,
-                y: plus.y - 40,
-                alpha: 0,
-                ease: 'Sine.easeOut',
-                duration: 700,
-                onComplete: () => plus.destroy()
-            });
-        })
+        
         this.is_perfect = true;
         this.is_bounce = false;
         this.ball.updateEmittersByStreak(this.streak);

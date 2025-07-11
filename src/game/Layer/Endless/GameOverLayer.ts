@@ -5,8 +5,6 @@ import PointManager from '../../Manager/PointManager';
 import { GAMEKEY } from '../../../Constant';
 
 export default class GameOverLayer extends Phaser.GameObjects.Layer implements ILayer{
-    private logo!: Phaser.GameObjects.Image;
-    private dragImg!: Phaser.GameObjects.Image;
     private settingBtn!: Phaser.GameObjects.Image;
     private likeBtn!: Phaser.GameObjects.Image;
     private restartBtn!: Phaser.GameObjects.Image;

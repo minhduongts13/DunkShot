@@ -1,4 +1,3 @@
-import HUDLayer from "./game/Layer/Endless/HUDLayer";
 
 export const GAMEKEY = {
     STAR: {

@@ -1,5 +1,5 @@
 // HUDLayer.ts
-import Phaser, { Game } from 'phaser';
+import Phaser from 'phaser';
 import PointManager from '../../Manager/PointManager';
 import { GAMEKEY } from '../../../Constant';
 

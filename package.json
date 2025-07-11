@@ -7,7 +7,8 @@
         "build": "node log.js build & rollup --config rollup/rollup.config.prod.mjs",
         "dev-nolog": "rollup --watch --config rollup/rollup.config.dev.mjs --no-treeshake",
         "build-nolog": "rollup --config rollup/rollup.config.prod.mjs",
-        "deploy": "npm run build && gh-pages -d dist"
+        "deploy": "npm run build && gh-pages -d dist",
+        "clean": "rimraf dist"
     },
     "repository": {
         "type": "git",
@@ -34,6 +35,8 @@
         "@rollup/plugin-typescript": "12.1.2",
         "@rollup/plugin-url": "^8.0.2",
         "@types/matter-js": "^0.19.8",
+        "gh-pages": "^6.3.0",
+        "rimraf": "^6.0.1",
         "rollup": "4.40.0",
         "rollup-plugin-copy": "3.5.0",
         "rollup-plugin-delete": "3.0.1",
@@ -41,8 +44,6 @@
         "rollup-plugin-livereload": "2.0.5",
         "rollup-plugin-serve": "3.0.0",
         "tslib": "2.8.1",
-        "typescript": "^5.4.5",
-        "gh-pages": "^6.3.0"
-
+        "typescript": "^5.4.5"
     }
 }

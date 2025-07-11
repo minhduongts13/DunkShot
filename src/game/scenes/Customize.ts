@@ -62,7 +62,7 @@ export default class Customize extends Phaser.Scene {
 
 
         // Star count
-        const starIcon = this.add.image(width * 0.77, 25, 'star0').setScale(1).setScrollFactor(0);
+        this.add.image(width * 0.77, 25, 'star0').setScale(1).setScrollFactor(0);
         this.starCount = this.add.text(width * 0.82, 25, `x ${PointManager.getMoney()}`, { font: '24px sans-serif', color: '#fb8925' })
             .setOrigin(0, 0.5)
             .setScrollFactor(0);

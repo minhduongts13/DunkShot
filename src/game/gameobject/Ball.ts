@@ -1,6 +1,5 @@
 // gameobject/Ball.ts
 import Phaser from "phaser";
-import Settings from "../Manager/Settings";
 
 export default class Ball extends Phaser.Physics.Arcade.Image implements IBall {
     public currentBasket: number;

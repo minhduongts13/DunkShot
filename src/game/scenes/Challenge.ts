@@ -2,7 +2,6 @@
 import { Scene } from 'phaser';
 import Ball from '../gameobject/Ball';
 import Basket from '../gameobject/Basket/Basket';
-import Walls from '../gameobject/Wall';
 import PointManager from '../Manager/PointManager';
 import { GAMEKEY } from '../../Constant';
 import GameOverLayer from '../Layer/Challenge/GameOverLayer';

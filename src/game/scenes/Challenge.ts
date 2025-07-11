@@ -363,10 +363,12 @@ private createBallPhysic(): void {
                 Math.sin(data.angle) * speed
             );
             ball.setAngularVelocity(360);
-        
+            let delay = PointManager.getCurrentLevel() == 1 ? 
+                GAMEKEY.SCENE.CHALLENGE.CHALLENGE1.TIME_LIMIT : 
+                GAMEKEY.SCENE.CHALLENGE.CHALLENGE2.TIME_LIMIT
             if (!this.timerEvent) {
                 this.timerEvent = this.time.addEvent({
-                    delay: 9000,           
+                    delay: delay,           
                 });
                 this.lastTime = -1;
             }

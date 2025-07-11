@@ -54,7 +54,6 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
         this.load.image("drag-it", "menu/drag-it.png");
-        this.load.image('background', 'Background/Background Walls 1.png');
         this.load.image('rim1', 'Basket/Basket1.png');
         this.load.image('rim2', 'Basket/Basket2.png');
         this.load.image('rim3', 'Basket/Basket3.png');
@@ -93,7 +92,7 @@ export class Preloader extends Scene
         this.load.image('btn-close', 'Pause/close.png');
         this.load.image('btn-play', 'Pause/play.png');
         this.load.image('btn-ok', 'Pause/ok.png');
-        this.load.image('intro-challenge-ui', 'Menu/ui-bg.png');
+        this.load.image('intro-challenge-ui', 'menu/ui-bg.png');
         this.load.image('particle-smoke', 'Game/smoke.png');
         this.load.image('particle-fire', 'Game/fire.png');
         this.load.image('flash1', 'Game/flash1.png')

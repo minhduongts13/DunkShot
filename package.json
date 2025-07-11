@@ -7,7 +7,7 @@
         "build": "node log.js build & rollup --config rollup/rollup.config.prod.mjs",
         "dev-nolog": "rollup --watch --config rollup/rollup.config.dev.mjs --no-treeshake",
         "build-nolog": "rollup --config rollup/rollup.config.prod.mjs",
-        "deploy": "npm run build && gh-pages -d dist",
+        "deploy": "npm run build && gh-pages -d dist --dotfiles",
         "clean": "rimraf dist"
     },
     "repository": {

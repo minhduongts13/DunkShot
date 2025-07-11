@@ -86,6 +86,7 @@ export default class PauseLayer extends Phaser.GameObjects.Container {
             .setScrollFactor(0)
             .on('pointerdown', () => {
                 this.fadeOut();
+                scene.resumeScene();
             })
         this.add(this.closeBtn);
 

@@ -220,7 +220,7 @@ export default class Basket extends Phaser.GameObjects.Container implements IBas
             const steps = 1.5 / tStep;
             for (let i = 0; i < steps; i++) {
                 px += vxi * tStep;
-                py += vyi * tStep + 0.5 * gravityY*1.2 * tStep * tStep;
+                py += vyi * tStep + 0.5 * gravityY * tStep * tStep;
                 vyi += gravityY*1.2 * tStep;
                 if (px <= worldLeft)  { px = worldLeft;  vxi = -vxi; }
                 if (px >= worldRight) { px = worldRight; vxi = -vxi; }

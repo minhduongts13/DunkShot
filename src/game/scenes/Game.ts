@@ -232,9 +232,9 @@ export class Game extends Scene implements IGameScene, IHasDragZone
             this.tweens.add({
                 targets: downFlash,
                 x: destX,
-                y: y + 200,
+                y: y + 300,
                 alpha: 0,
-                duration: 400,
+                duration: 500,
                 onComplete: () => downFlash.setVisible(false)
             });
             this.tweens.add({
@@ -242,7 +242,7 @@ export class Game extends Scene implements IGameScene, IHasDragZone
                 x: destX,
                 y: y - 800,
                 alpha: 0,
-                duration: 400,
+                duration: 500,
                 onComplete: () => upFlash.setVisible(false)
             });
         });
